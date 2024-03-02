@@ -1,6 +1,7 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Product } from "@/utils/types";
+import { Link } from "expo-router";
 
 type ProductListItemProps = {
   product: Product;
@@ -8,21 +9,23 @@ type ProductListItemProps = {
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
   return (
-    <View style={styles.container}>
-      {product.img && (
-        <Image
-          source={{ uri: product.img }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      )}
-      {(product.img === null || product.img.length === 0) && (
-        <View style={styles.fallbackContainer}>
-          <Text>No image</Text>
-        </View>
-      )}
-      <Text>{product.name}</Text>
-    </View>
+    <Link href={`/menu/${product.id}`} asChild>
+      <Pressable style={styles.container}>
+        {product.img && (
+          <Image
+            source={{ uri: product.img }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        )}
+        {(product.img === null || product.img.length === 0) && (
+          <View style={styles.fallbackContainer}>
+            <Text>No image</Text>
+          </View>
+        )}
+        <Text>{product.name}</Text>
+      </Pressable>
+    </Link>
   );
 };
 
