@@ -9,7 +9,11 @@ type CustomButtonProps = {
 const CustomButton = forwardRef<View | null, CustomButtonProps>(
   ({ text, ...pressableProps }, ref) => {
     return (
-      <Pressable ref={ref} {...pressableProps} style={styles.container}>
+      <Pressable
+        ref={ref}
+        {...pressableProps}
+        style={({ pressed }) => [styles.container, pressed && { opacity: 0.7 }]}
+      >
         <Text style={styles.text}>{text}</Text>
       </Pressable>
     );

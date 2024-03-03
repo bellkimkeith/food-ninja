@@ -1,11 +1,14 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { products } from "@/assets/data/products";
 import CustomButton from "@/components/CustomButton";
+import { useCart } from "@/providers/CartContextProvider";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
+  const { addCartItem } = useCart();
+  const router = useRouter();
   const { id } = useLocalSearchParams();
   const currentProduct = products.find((product) => product.id === +id);
 
@@ -20,7 +23,9 @@ const ProductDetails = () => {
   };
 
   const addToCartHandler = () => {
-    console.warn("add to cart ", quantity);
+    if (!currentProduct) return;
+    addCartItem(currentProduct, quantity);
+    router.push("/cart");
   };
 
   if (!currentProduct) {
@@ -39,7 +44,7 @@ const ProductDetails = () => {
         style={styles.image}
         resizeMode="contain"
       />
-      <Text style={styles.priceText}>₱ {currentProduct.price.toFixed(2)}</Text>
+      <Text style={styles.priceText}>₱{currentProduct.price.toFixed(2)}</Text>
       <View style={styles.quantityContainer}>
         <Text style={styles.quantityText}>Quantity</Text>
         <TouchableOpacity
@@ -61,7 +66,7 @@ const ProductDetails = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.totalText}>
-        Total: {currentProduct.price * quantity}
+        Total: ₱{(currentProduct.price * quantity).toFixed(2)}
       </Text>
       <CustomButton text="Add to cart" onPress={addToCartHandler} />
     </View>
@@ -79,8 +84,8 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     aspectRatio: 1,
-    borderTopEndRadius: 12,
-    borderTopStartRadius: 12,
+    borderTopRightRadius: 12,
+    borderTopLeftRadius: 12,
   },
   priceText: {
     fontSize: 28,
@@ -98,8 +103,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
     borderWidth: 1,
     borderColor: "#bbb",
-    borderEndStartRadius: 12,
-    borderEndEndRadius: 12,
+    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: 12,
   },
   quantityText: {
     fontSize: 28,
