@@ -15,7 +15,7 @@ export default function MenuLayout() {
               {({ pressed }) => (
                 <FontAwesome
                   name="shopping-cart"
-                  size={20}
+                  size={24}
                   color={Colors[colorScheme ?? "light"].text}
                   style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                 />
