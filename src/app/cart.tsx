@@ -4,9 +4,10 @@ import { StatusBar } from "expo-status-bar";
 import { useCart } from "@/providers/CartContextProvider";
 import CartListItem from "@/components/CartListItem";
 import { Stack } from "expo-router";
+import CustomButton from "@/components/CustomButton";
 
 const Cart = () => {
-  const { cartItems } = useCart();
+  const { cartItems, totalAmount } = useCart();
 
   if (cartItems.length === 0) {
     return (
@@ -18,13 +19,15 @@ const Cart = () => {
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       <Stack.Screen options={{ title: "Cart" }} />
       <FlatList
         data={cartItems}
         renderItem={({ item }) => <CartListItem cartItem={item} />}
-        contentContainerStyle={styles.container}
       />
+
+      <Text style={styles.totalText}>Total: ₱{totalAmount.toFixed(2)}</Text>
+      <CustomButton text="Checkout" />
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>
@@ -35,6 +38,7 @@ export default Cart;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 10,
     gap: 5,
   },
@@ -42,5 +46,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 24,
     marginTop: "50%",
+  },
+  totalText: {
+    fontSize: 24,
   },
 });
