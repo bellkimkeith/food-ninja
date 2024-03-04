@@ -7,6 +7,7 @@ import { useCart } from "@/providers/CartContextProvider";
 
 const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
+  const [validUri, setValidUri] = useState(true);
   const { addCartItem } = useCart();
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -40,7 +41,12 @@ const ProductDetails = () => {
     <View style={styles.container}>
       <Stack.Screen options={{ title: currentProduct.name }} />
       <Image
-        source={{ uri: currentProduct.img }}
+        onError={() => setValidUri(false)}
+        source={{
+          uri: validUri
+            ? currentProduct.img
+            : "https://placehold.co/400x400.png",
+        }}
         style={styles.image}
         resizeMode="contain"
       />

@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Product } from "@/utils/types";
 import { Link } from "expo-router";
 
@@ -8,21 +8,19 @@ type ProductListItemProps = {
 };
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
+  const [validUri, setValidUri] = useState(true);
+
   return (
     <Link href={`../menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
-        {product.img && (
-          <Image
-            source={{ uri: product.img }}
-            style={styles.image}
-            resizeMode="contain"
-          />
-        )}
-        {(product.img === null || product.img.length === 0) && (
-          <View style={styles.fallbackContainer}>
-            <Text>No image</Text>
-          </View>
-        )}
+        <Image
+          onError={() => setValidUri(false)}
+          source={{
+            uri: validUri ? product.img : "https://placehold.co/400x400.png",
+          }}
+          style={styles.image}
+          resizeMode="contain"
+        />
         <Text>{product.name}</Text>
       </Pressable>
     </Link>
@@ -44,13 +42,5 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 12,
     marginBottom: 10,
-  },
-  fallbackContainer: {
-    flex: 1,
-    backgroundColor: "gray",
-    borderRadius: 12,
-    marginBottom: 10,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

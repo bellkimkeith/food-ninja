@@ -1,12 +1,32 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
 import { Stack } from "expo-router";
 import CustomButton from "@/components/CustomButton";
+import Colors from "@/constants/Colors";
+import * as ImagePicker from "expo-image-picker";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
+  const [validUri, setValidUri] = useState(true);
+  const [image, setImage] = useState("https://placehold.co/400x400.png");
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const validateInputs = () => {
     setErrors("");
@@ -39,6 +59,17 @@ const AddProduct = () => {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: "Add Product" }} />
+      <Image
+        onError={() => setValidUri(false)}
+        source={{
+          uri: image,
+        }}
+        style={styles.image}
+        resizeMode="contain"
+      />
+      <Text style={styles.addTextButton} onPress={pickImage}>
+        Pick Image
+      </Text>
       <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
@@ -82,5 +113,17 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     color: "red",
+  },
+  image: {
+    alignSelf: "center",
+    width: "50%",
+    aspectRatio: 1,
+    borderRadius: 12,
+  },
+  addTextButton: {
+    fontSize: 18,
+    color: Colors.light.tint,
+    textAlign: "center",
+    marginVertical: 10,
   },
 });

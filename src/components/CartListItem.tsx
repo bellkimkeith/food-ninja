@@ -3,19 +3,25 @@ import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { CartItem } from "@/utils/types";
 import { useCart } from "@/providers/CartContextProvider";
+import { useState } from "react";
 
 type CartListItemProps = {
   cartItem: CartItem;
 };
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
+  const [validUri, setValidUri] = useState(true);
   const { updateQuantity } = useCart();
-  const placeHolderImage = "https://placehold.co/75";
 
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: cartItem.product.img || placeHolderImage }}
+        onError={() => setValidUri(false)}
+        source={{
+          uri: validUri
+            ? cartItem.product.img
+            : "https://placehold.co/400x400.png",
+        }}
         style={styles.image}
         resizeMode="contain"
       />
