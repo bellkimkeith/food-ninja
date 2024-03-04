@@ -1,16 +1,19 @@
 import { Image, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
+import { products } from "@/assets/data/products";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
-  const [validUri, setValidUri] = useState(true);
   const [image, setImage] = useState("https://placehold.co/400x400.png");
+  const { id } = useLocalSearchParams();
+  const currentProduct = products.find((product) => product.id === +id);
+  const isEditingProduct = !!id;
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -51,30 +54,50 @@ const AddProduct = () => {
   };
 
   const submitProductHandler = () => {
+    if (isEditingProduct) {
+      editProduct();
+    } else {
+      addProduct();
+    }
+  };
+
+  const addProduct = () => {
     if (!validateInputs()) return;
 
     resetFields();
   };
 
+  const editProduct = () => {
+    if (!validateInputs()) return;
+
+    resetFields();
+  };
+
+  const deleteProductConfirm = () => {};
+
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: "Add Product" }} />
+      <Stack.Screen
+        options={{
+          title: isEditingProduct ? "Edit Product" : "Add Product",
+          headerBackTitleVisible: false,
+        }}
+      />
       <Image
-        onError={() => setValidUri(false)}
         source={{
-          uri: image,
+          uri: currentProduct ? currentProduct.img : image,
         }}
         style={styles.image}
         resizeMode="contain"
       />
-      <Text style={styles.addTextButton} onPress={pickImage}>
+      <Text style={styles.textButton} onPress={pickImage}>
         Pick Image
       </Text>
       <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
         placeholder="Jon Snow"
-        value={name}
+        value={currentProduct ? currentProduct.name : name}
         onChangeText={setName}
       />
       <Text style={styles.label}>Price</Text>
@@ -82,11 +105,22 @@ const AddProduct = () => {
         style={styles.input}
         keyboardType="numeric"
         placeholder="1.99"
-        value={price}
+        value={currentProduct ? currentProduct.price.toString() : price}
         onChangeText={setPrice}
       />
       <Text style={styles.errorText}>{errors}</Text>
-      <CustomButton text="Submit" onPress={submitProductHandler} />
+      <CustomButton
+        text={currentProduct ? "Save" : "Submit"}
+        onPress={submitProductHandler}
+      />
+      {isEditingProduct && (
+        <Text
+          style={[styles.textButton, { color: "red" }]}
+          onPress={deleteProductConfirm}
+        >
+          Delete
+        </Text>
+      )}
     </View>
   );
 };
@@ -120,7 +154,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 12,
   },
-  addTextButton: {
+  textButton: {
     fontSize: 18,
     color: Colors.light.tint,
     textAlign: "center",

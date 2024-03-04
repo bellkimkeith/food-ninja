@@ -1,14 +1,23 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
 import React, { useState } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { products } from "@/assets/data/products";
 import { useCart } from "@/providers/CartContextProvider";
+import { FontAwesome } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 
 const ProductDetails = () => {
   const [validUri, setValidUri] = useState(true);
-  const router = useRouter();
   const { id } = useLocalSearchParams();
   const currentProduct = products.find((product) => product.id === +id);
+  const colorScheme = useColorScheme();
 
   if (!currentProduct) {
     return (
@@ -20,7 +29,25 @@ const ProductDetails = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: currentProduct.name }} />
+      <Stack.Screen
+        options={{
+          title: currentProduct.name,
+          headerRight: () => (
+            <Link href={`/(admin-tabs)/menu/add?id=${id}`} asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="pencil"
+                    size={24}
+                    color={Colors[colorScheme ?? "light"].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
       <Image
         onError={() => setValidUri(false)}
         source={{
