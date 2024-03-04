@@ -16,7 +16,7 @@ export default function MenuLayout() {
         options={{
           title: "Menu",
           headerRight: () => (
-            <Link href="/cart" asChild>
+            <Link href="/(admin-tabs)/menu/add" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
