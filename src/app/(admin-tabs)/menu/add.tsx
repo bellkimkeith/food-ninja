@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
@@ -73,7 +73,20 @@ const AddProduct = () => {
     resetFields();
   };
 
-  const deleteProductConfirm = () => {};
+  const deleteProduct = () => {
+    console.warn("Deleted");
+  };
+
+  const deleteProductConfirm = () => {
+    Alert.alert(
+      "Confirm Delete",
+      "Are you sure you want to delete this product?",
+      [
+        { text: "Cancel" },
+        { text: "Delete", style: "destructive", onPress: deleteProduct },
+      ]
+    );
+  };
 
   return (
     <View style={styles.container}>
