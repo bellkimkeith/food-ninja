@@ -2,7 +2,7 @@ import { products } from "@/assets/data/products";
 import ProductListItem from "@/components/ProductListItem";
 import { FlatList } from "react-native";
 
-export default function TabOneScreen() {
+export default function MenuScreen() {
   return (
     <FlatList
       data={products}

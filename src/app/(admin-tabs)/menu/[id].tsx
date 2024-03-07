@@ -13,7 +13,7 @@ import { useCart } from "@/providers/CartContextProvider";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 
-const ProductDetails = () => {
+const ProductDetailsScreen = () => {
   const [validUri, setValidUri] = useState(true);
   const { id } = useLocalSearchParams();
   const currentProduct = products.find((product) => product.id === +id);
@@ -63,7 +63,7 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default ProductDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {

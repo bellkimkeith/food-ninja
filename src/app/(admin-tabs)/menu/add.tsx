@@ -6,7 +6,7 @@ import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
 import { products } from "@/assets/data/products";
 
-const AddProduct = () => {
+const AddProductScreen = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
@@ -138,7 +138,7 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default AddProductScreen;
 
 const styles = StyleSheet.create({
   container: {

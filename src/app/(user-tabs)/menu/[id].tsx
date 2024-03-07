@@ -5,7 +5,7 @@ import { products } from "@/assets/data/products";
 import CustomButton from "@/components/CustomButton";
 import { useCart } from "@/providers/CartContextProvider";
 
-const ProductDetails = () => {
+const ProductDetailsScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const [validUri, setValidUri] = useState(true);
   const { addCartItem } = useCart();
@@ -79,7 +79,7 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default ProductDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {

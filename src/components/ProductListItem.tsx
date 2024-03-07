@@ -2,6 +2,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { Product } from "@/utils/types";
 import { Link } from "expo-router";
+import { useSegments } from "expo-router";
 
 type ProductListItemProps = {
   product: Product;
@@ -9,9 +10,12 @@ type ProductListItemProps = {
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
   const [validUri, setValidUri] = useState(true);
+  const segments = useSegments<
+    ["(admin-tabs)", "menu", "[id]"] | ["(user-tabs)", "menu", "[id]"]
+  >();
 
   return (
-    <Link href={`../menu/${product.id}`} asChild>
+    <Link href={`/${segments[0]}/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
         <Image
           onError={() => setValidUri(false)}
