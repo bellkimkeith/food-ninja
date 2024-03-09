@@ -28,3 +28,12 @@ export type OrderItem = {
   product_id: Product["id"];
   product: Product;
 };
+
+export type OrderStatus = "New" | "Cooking" | "Delivering" | "Delivered";
+
+export const OrderStatusList: OrderStatus[] = [
+  "New",
+  "Cooking",
+  "Delivering",
+  "Delivered",
+];

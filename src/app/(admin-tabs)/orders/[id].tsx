@@ -4,6 +4,7 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import OrderListItem from "@/components/OrderListItem";
 import { orders } from "@/assets/data/orders";
 import OrderItemsListItem from "@/components/OrderItemsListItem";
+import OrderStatusSelector from "@/components/OrderStatusSelector";
 
 const OrderDetailsScreen = () => {
   const { id } = useLocalSearchParams();
@@ -22,6 +23,7 @@ const OrderDetailsScreen = () => {
         renderItem={({ item }) => <OrderItemsListItem orderItem={item} />}
         contentContainerStyle={{ gap: 10, margin: 10 }}
         ListHeaderComponent={() => <OrderListItem order={currentOrder} />}
+        ListFooterComponent={() => <OrderStatusSelector order={currentOrder} />}
       />
     </View>
   );
