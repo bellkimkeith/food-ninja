@@ -1,13 +1,15 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
 import { Stack, router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
+import { supabase } from "@/lib/supabase";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
@@ -25,16 +27,23 @@ const SignUp = () => {
       setErrors("Password is requried!");
       return false;
     }
-    if (password.length < 8) {
-      setErrors("Password too short. Must be at least 8 characters!");
+    if (password.length < 6) {
+      setErrors("Password too short. Must be at least 6 characters!");
       return false;
     }
     return true;
   };
 
-  const onSubmitHandler = () => {
+  const onSubmitHandler = async () => {
     if (!validateInputs()) return;
-    console.warn("Submitted");
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) Alert.alert(error.message);
+    setLoading(false);
   };
 
   return (
@@ -63,7 +72,11 @@ const SignUp = () => {
         secureTextEntry={true}
       />
       <Text style={styles.errorText}>{errors}</Text>
-      <CustomButton text={"Create Account"} onPress={onSubmitHandler} />
+      <CustomButton
+        disabled={loading}
+        text={loading ? "Creating..." : "Create Account"}
+        onPress={onSubmitHandler}
+      />
       <Text
         style={styles.textButton}
         onPress={() => {
