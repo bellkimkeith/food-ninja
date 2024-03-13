@@ -109,7 +109,7 @@ const AddProductScreen = () => {
       <Text style={styles.label}>Name</Text>
       <TextInput
         style={styles.input}
-        placeholder="Jon Snow"
+        placeholder="Ice Cream"
         value={currentProduct ? currentProduct.name : name}
         onChangeText={setName}
       />
