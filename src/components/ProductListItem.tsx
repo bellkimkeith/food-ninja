@@ -20,7 +20,10 @@ const ProductListItem = ({ product }: ProductListItemProps) => {
         <Image
           onError={() => setValidUri(false)}
           source={{
-            uri: validUri ? product.img : "https://placehold.co/400x400.png",
+            uri:
+              validUri && product.img !== null
+                ? product.img
+                : "https://placehold.co/400x400.png",
           }}
           style={styles.image}
           resizeMode="contain"

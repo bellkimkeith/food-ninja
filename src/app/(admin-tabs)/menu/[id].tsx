@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   StyleSheet,
@@ -7,21 +8,34 @@ import {
   useColorScheme,
 } from "react-native";
 import React, { useState } from "react";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { products } from "@/assets/data/products";
-import { useCart } from "@/providers/CartContextProvider";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import { useProduct } from "@/api/products";
 
 const ProductDetailsScreen = () => {
   const [validUri, setValidUri] = useState(true);
   const { id } = useLocalSearchParams();
-  const currentProduct = products.find((product) => product.id === +id);
+  const {
+    data: currentProduct,
+    error,
+    isLoading,
+  } = useProduct(parseInt(typeof id === "string" ? id : id[0]));
   const colorScheme = useColorScheme();
 
-  if (!currentProduct) {
+  if (isLoading) {
+    return (
+      <>
+        <Stack.Screen options={{ title: "" }} />
+        <ActivityIndicator />
+      </>
+    );
+  }
+
+  if (error) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Stack.Screen options={{ title: "" }} />
         <Text>No product details</Text>
       </View>
     );
@@ -51,9 +65,10 @@ const ProductDetailsScreen = () => {
       <Image
         onError={() => setValidUri(false)}
         source={{
-          uri: validUri
-            ? currentProduct.img
-            : "https://placehold.co/400x400.png",
+          uri:
+            validUri && currentProduct.img !== null
+              ? currentProduct.img
+              : "https://placehold.co/400x400.png",
         }}
         style={styles.image}
         resizeMode="contain"
