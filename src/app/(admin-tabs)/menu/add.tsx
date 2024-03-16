@@ -1,10 +1,11 @@
 import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
 import { products } from "@/assets/data/products";
+import { useInsertProduct } from "@/api/products";
 
 const AddProductScreen = () => {
   const [name, setName] = useState("");
@@ -14,6 +15,8 @@ const AddProductScreen = () => {
   const { id } = useLocalSearchParams();
   const currentProduct = products.find((product) => product.id === +id);
   const isEditingProduct = !!id;
+  const { mutate: insertProduct, isPending } = useInsertProduct();
+  const router = useRouter();
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -62,7 +65,15 @@ const AddProductScreen = () => {
   const addProduct = () => {
     if (!validateInputs()) return;
 
-    resetFields();
+    insertProduct(
+      { name, price: parseFloat(price), img: image },
+      {
+        onSuccess: () => {
+          resetFields();
+          router.back();
+        },
+      }
+    );
   };
 
   const editProduct = () => {
@@ -110,6 +121,7 @@ const AddProductScreen = () => {
         placeholder="Ice Cream"
         value={currentProduct ? currentProduct.name : name}
         onChangeText={setName}
+        autoCorrect={false}
       />
       <Text style={styles.label}>Price</Text>
       <TextInput
@@ -123,6 +135,7 @@ const AddProductScreen = () => {
       <CustomButton
         text={currentProduct ? "Save" : "Submit"}
         onPress={submitProductHandler}
+        disabled={isPending}
       />
       {isEditingProduct && (
         <Text
