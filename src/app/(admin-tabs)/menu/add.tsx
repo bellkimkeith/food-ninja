@@ -1,11 +1,16 @@
 import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
 import { products } from "@/assets/data/products";
-import { useInsertProduct } from "@/api/products";
+import {
+  useDeleteProduct,
+  useInsertProduct,
+  useProduct,
+  useUpdateProduct,
+} from "@/api/products";
 
 const AddProductScreen = () => {
   const [name, setName] = useState("");
@@ -13,10 +18,25 @@ const AddProductScreen = () => {
   const [errors, setErrors] = useState("");
   const [image, setImage] = useState("https://placehold.co/400x400.png");
   const { id } = useLocalSearchParams();
-  const currentProduct = products.find((product) => product.id === +id);
   const isEditingProduct = !!id;
-  const { mutate: insertProduct, isPending } = useInsertProduct();
+  const { mutate: insertProduct, isPending: insertPending } =
+    useInsertProduct();
+  const { mutate: updateProduct, isPending: updatePending } =
+    useUpdateProduct();
+  const { data: currentProduct } = useProduct(
+    parseInt(typeof id === "string" ? id : id?.[0])
+  );
+  const { mutate: deleteProduct, isPending: deletePending } =
+    useDeleteProduct();
   const router = useRouter();
+
+  useEffect(() => {
+    if (currentProduct) {
+      setName(currentProduct.name);
+      setImage(currentProduct.img);
+      setPrice(currentProduct.price.toString());
+    }
+  }, [currentProduct]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -79,11 +99,29 @@ const AddProductScreen = () => {
   const editProduct = () => {
     if (!validateInputs()) return;
 
-    resetFields();
+    updateProduct(
+      {
+        id: parseInt(typeof id === "string" ? id : id[0]),
+        name,
+        price: parseFloat(price),
+        img: image,
+      },
+      {
+        onSuccess: () => {
+          resetFields();
+          router.back();
+        },
+      }
+    );
   };
 
-  const deleteProduct = () => {
-    console.warn("Deleted");
+  const onDeleteHandler = () => {
+    deleteProduct(parseInt(typeof id === "string" ? id : id[0]), {
+      onSuccess: () => {
+        resetFields();
+        router.replace("/(admin-tabs)");
+      },
+    });
   };
 
   const deleteProductConfirm = () => {
@@ -92,7 +130,7 @@ const AddProductScreen = () => {
       "Are you sure you want to delete this product?",
       [
         { text: "Cancel" },
-        { text: "Delete", style: "destructive", onPress: deleteProduct },
+        { text: "Delete", style: "destructive", onPress: onDeleteHandler },
       ]
     );
   };
@@ -107,7 +145,7 @@ const AddProductScreen = () => {
       />
       <Image
         source={{
-          uri: currentProduct ? currentProduct.img : image,
+          uri: image === null ? "https://placehold.co/400x400.png" : image,
         }}
         style={styles.image}
         resizeMode="contain"
@@ -119,7 +157,7 @@ const AddProductScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Ice Cream"
-        value={currentProduct ? currentProduct.name : name}
+        value={name}
         onChangeText={setName}
         autoCorrect={false}
       />
@@ -128,19 +166,20 @@ const AddProductScreen = () => {
         style={styles.input}
         keyboardType="numeric"
         placeholder="1.99"
-        value={currentProduct ? currentProduct.price.toString() : price}
+        value={price}
         onChangeText={setPrice}
       />
       <Text style={styles.errorText}>{errors}</Text>
       <CustomButton
         text={currentProduct ? "Save" : "Submit"}
         onPress={submitProductHandler}
-        disabled={isPending}
+        disabled={insertPending || updatePending || deletePending}
       />
       {isEditingProduct && (
         <Text
           style={[styles.textButton, { color: "red" }]}
           onPress={deleteProductConfirm}
+          disabled={insertPending || updatePending || deletePending}
         >
           Delete
         </Text>
