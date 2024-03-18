@@ -1,17 +1,41 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import OrderListItem from "@/components/OrderListItem";
-import { orders } from "@/assets/data/orders";
 import OrderItemsListItem from "@/components/OrderItemsListItem";
 import OrderStatusSelector from "@/components/OrderStatusSelector";
+import { useOrder } from "@/api/orders";
 
 const OrderDetailsScreen = () => {
   const { id } = useLocalSearchParams();
-  const currentOrder = orders.find((order) => order.id.toString() === id);
+  const {
+    data: currentOrder,
+    isLoading,
+    error,
+  } = useOrder(parseInt(typeof id === "string" ? id : id[0]));
 
-  if (!currentOrder) {
-    return <Text>No order details</Text>;
+  if (isLoading) {
+    return (
+      <>
+        <Stack.Screen options={{ title: "" }} />
+        <ActivityIndicator />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Stack.Screen options={{ title: "" }} />
+        <Text>No order details</Text>
+      </View>
+    );
   }
 
   return (

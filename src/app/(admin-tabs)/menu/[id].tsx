@@ -45,7 +45,7 @@ const ProductDetailsScreen = () => {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          title: currentProduct.name,
+          title: currentProduct?.name,
           headerRight: () => (
             <Link href={`/(admin-tabs)/menu/add?id=${id}`} asChild>
               <Pressable>
@@ -66,14 +66,14 @@ const ProductDetailsScreen = () => {
         onError={() => setValidUri(false)}
         source={{
           uri:
-            validUri && currentProduct.img !== null
-              ? currentProduct.img
+            validUri && currentProduct?.img !== null
+              ? currentProduct?.img
               : "https://placehold.co/400x400.png",
         }}
         style={styles.image}
         resizeMode="contain"
       />
-      <Text style={styles.priceText}>₱{currentProduct.price.toFixed(2)}</Text>
+      <Text style={styles.priceText}>₱{currentProduct?.price.toFixed(2)}</Text>
     </View>
   );
 };

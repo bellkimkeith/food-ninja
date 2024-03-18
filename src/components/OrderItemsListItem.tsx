@@ -14,9 +14,10 @@ const OrderItemsListItem = ({ orderItem }: OrderItemsListItemProp) => {
       <Image
         onError={() => setValidUri(false)}
         source={{
-          uri: validUri
-            ? orderItem.product.img
-            : "https://placehold.co/400x400.png",
+          uri:
+            validUri && orderItem.product.img !== null
+              ? orderItem.product.img
+              : "https://placehold.co/400x400.png",
         }}
         style={styles.image}
         resizeMode="contain"

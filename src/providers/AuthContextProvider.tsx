@@ -28,7 +28,7 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSessiion = async () => {
+    const fetchSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -51,7 +51,7 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
       setSession(session);
     });
 
-    fetchSessiion();
+    fetchSession();
   }, []);
 
   return (

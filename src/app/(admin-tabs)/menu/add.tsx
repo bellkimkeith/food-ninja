@@ -16,7 +16,9 @@ const AddProductScreen = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
-  const [image, setImage] = useState("https://placehold.co/400x400.png");
+  const [image, setImage] = useState<string | null>(
+    "https://placehold.co/400x400.png"
+  );
   const { id } = useLocalSearchParams();
   const isEditingProduct = !!id;
   const { mutate: insertProduct, isPending: insertPending } =

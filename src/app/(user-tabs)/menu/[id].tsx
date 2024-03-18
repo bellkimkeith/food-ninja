@@ -61,19 +61,19 @@ const ProductDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: currentProduct.name }} />
+      <Stack.Screen options={{ title: currentProduct?.name }} />
       <Image
         onError={() => setValidUri(false)}
         source={{
           uri:
-            validUri && currentProduct.img !== null
-              ? currentProduct.img
+            validUri && currentProduct?.img !== null
+              ? currentProduct?.img
               : "https://placehold.co/400x400.png",
         }}
         style={styles.image}
         resizeMode="contain"
       />
-      <Text style={styles.priceText}>₱{currentProduct.price.toFixed(2)}</Text>
+      <Text style={styles.priceText}>₱{currentProduct?.price.toFixed(2)}</Text>
       <View style={styles.quantityContainer}>
         <Text style={styles.quantityText}>Quantity</Text>
         <TouchableOpacity
@@ -95,7 +95,10 @@ const ProductDetailsScreen = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.totalText}>
-        Total: ₱{(currentProduct.price * quantity).toFixed(2)}
+        Total: ₱
+        {currentProduct?.price
+          ? (currentProduct?.price * quantity).toFixed(2)
+          : 0}
       </Text>
       <CustomButton text="Add to cart" onPress={addToCartHandler} />
     </View>
