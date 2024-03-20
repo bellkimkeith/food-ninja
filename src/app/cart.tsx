@@ -7,7 +7,7 @@ import { Stack } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 
 const Cart = () => {
-  const { cartItems, totalAmount } = useCart();
+  const { cartItems, totalAmount, checkout } = useCart();
 
   if (cartItems.length === 0) {
     return (
@@ -27,7 +27,7 @@ const Cart = () => {
       />
 
       <Text style={styles.totalText}>Total: ₱{totalAmount.toFixed(2)}</Text>
-      <CustomButton text="Checkout" />
+      <CustomButton text="Checkout" onPress={checkout} />
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>

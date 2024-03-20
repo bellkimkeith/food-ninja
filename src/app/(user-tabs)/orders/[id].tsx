@@ -28,7 +28,7 @@ const OrderDetailsScreen = () => {
     );
   }
 
-  if (error) {
+  if (error || !currentOrder) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "" }} />

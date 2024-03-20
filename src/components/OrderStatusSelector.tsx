@@ -4,6 +4,7 @@ import { Order, OrderStatusList } from "@/utils/types";
 import Colors from "@/constants/Colors";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useUpdateOrder } from "@/api/orders";
 
 type OrderStatusSelectorProp = {
   order: Order;
@@ -12,13 +13,18 @@ type OrderStatusSelectorProp = {
 dayjs.extend(relativeTime);
 
 const OrderStatusSelector = ({ order }: OrderStatusSelectorProp) => {
-  const updateStatusHandler = () => {
+  const { mutate: updateOrder } = useUpdateOrder();
+
+  const updateStatusHandler = (status: string) => {
     if (
       dayjs().isAfter(order.created_at, "day") &&
       order.status === "Delivered"
     )
       return;
-    console.log("Status Updated");
+    updateOrder({
+      id: order.id,
+      data: { status },
+    });
   };
 
   return (
@@ -28,7 +34,9 @@ const OrderStatusSelector = ({ order }: OrderStatusSelectorProp) => {
         {OrderStatusList.map((status) => (
           <Pressable
             key={status}
-            onPress={updateStatusHandler}
+            onPress={() => {
+              updateStatusHandler(status);
+            }}
             style={[
               styles.button,
               {

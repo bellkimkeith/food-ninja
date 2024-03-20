@@ -1,10 +1,10 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import Colors from "@/constants/Colors";
-import { OrderItem } from "@/utils/types";
+import { OrderItem, Product } from "@/utils/types";
 
 type OrderItemsListItemProp = {
-  orderItem: OrderItem;
+  orderItem: OrderItem & { products: Product | null };
 };
 
 const OrderItemsListItem = ({ orderItem }: OrderItemsListItemProp) => {
@@ -15,18 +15,22 @@ const OrderItemsListItem = ({ orderItem }: OrderItemsListItemProp) => {
         onError={() => setValidUri(false)}
         source={{
           uri:
-            validUri && orderItem.product.img !== null
-              ? orderItem.product.img
+            validUri && orderItem.products?.img !== null
+              ? orderItem.products?.img
               : "https://placehold.co/400x400.png",
         }}
         style={styles.image}
         resizeMode="contain"
       />
       <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{orderItem.product.name}</Text>
+        <Text style={styles.title}>{orderItem.products?.name}</Text>
         <View style={styles.subtitleContainer}>
           <Text style={styles.price}>
-            ₱{(orderItem.product.price * orderItem.quantity).toFixed(2)}
+            ₱
+            {(orderItem.products?.price
+              ? orderItem.products.price * orderItem.quantity
+              : 0
+            ).toFixed(2)}
           </Text>
         </View>
       </View>
