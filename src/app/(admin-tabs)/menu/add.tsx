@@ -104,9 +104,7 @@ const AddProductScreen = () => {
     updateProduct(
       {
         id: parseInt(typeof id === "string" ? id : id[0]),
-        name,
-        price: parseFloat(price),
-        img: image,
+        data: { name, price: parseFloat(price), img: image },
       },
       {
         onSuccess: () => {

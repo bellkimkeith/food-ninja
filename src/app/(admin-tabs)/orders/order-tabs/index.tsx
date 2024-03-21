@@ -8,6 +8,7 @@ import {
 import React from "react";
 import OrderListItem from "@/components/OrderListItem";
 import { useAdminOrderList } from "@/api/orders";
+import { useInsertOrderSubscription } from "@/api/orders/subscriptions";
 
 const OrdersScreen = () => {
   const {
@@ -15,6 +16,8 @@ const OrdersScreen = () => {
     error,
     isLoading,
   } = useAdminOrderList({ delivered: false });
+
+  useInsertOrderSubscription();
 
   if (isLoading) {
     return <ActivityIndicator />;

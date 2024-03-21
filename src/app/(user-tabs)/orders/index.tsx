@@ -8,9 +8,11 @@ import {
 import React from "react";
 import OrderListItem from "@/components/OrderListItem";
 import { useMyOrderList } from "@/api/orders";
+import { useUpdateOrdersSubscription } from "@/api/orders/subscriptions";
 
 const OrdersScreen = () => {
   const { data: orders, error, isLoading } = useMyOrderList();
+  useUpdateOrdersSubscription();
 
   if (isLoading) {
     return <ActivityIndicator />;
