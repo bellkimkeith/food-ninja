@@ -1,27 +1,22 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { CartItem } from "@/utils/types";
 import { useCart } from "@/providers/CartContextProvider";
-import { useState } from "react";
+import RemoteImage from "./RemoteImage";
 
 type CartListItemProps = {
   cartItem: CartItem;
 };
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
-  const [validUri, setValidUri] = useState(true);
   const { updateQuantity } = useCart();
 
   return (
     <View style={styles.container}>
-      <Image
-        onError={() => setValidUri(false)}
-        source={{
-          uri: validUri
-            ? cartItem.product.img
-            : "https://placehold.co/400x400.png",
-        }}
+      <RemoteImage
+        path={cartItem.product.img}
+        fallback="https://placehold.co/400x400.png"
         style={styles.image}
         resizeMode="contain"
       />

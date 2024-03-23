@@ -1,15 +1,14 @@
-import { Image, Pressable, StyleSheet, Text } from "react-native";
-import React, { useState } from "react";
+import { Pressable, StyleSheet, Text } from "react-native";
 import { Product } from "@/utils/types";
 import { Link } from "expo-router";
 import { useSegments } from "expo-router";
+import RemoteImage from "./RemoteImage";
 
 type ProductListItemProps = {
   product: Product;
 };
 
 const ProductListItem = ({ product }: ProductListItemProps) => {
-  const [validUri, setValidUri] = useState(true);
   const segments = useSegments<
     ["(admin-tabs)", "menu", "[id]"] | ["(user-tabs)", "menu", "[id]"]
   >();
@@ -17,14 +16,9 @@ const ProductListItem = ({ product }: ProductListItemProps) => {
   return (
     <Link href={`/${segments[0]}/menu/${product.id}`} asChild>
       <Pressable style={styles.container}>
-        <Image
-          onError={() => setValidUri(false)}
-          source={{
-            uri:
-              validUri && product.img !== null
-                ? product.img
-                : "https://placehold.co/400x400.png",
-          }}
+        <RemoteImage
+          path={product.img}
+          fallback="https://placehold.co/400x400.png"
           style={styles.image}
           resizeMode="contain"
         />

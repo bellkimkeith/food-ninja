@@ -1,16 +1,21 @@
-import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
-import { products } from "@/assets/data/products";
 import {
   useDeleteProduct,
   useInsertProduct,
   useProduct,
   useUpdateProduct,
 } from "@/api/products";
+import * as FileSystem from "expo-file-system";
+import { randomUUID } from "expo-crypto";
+import { supabase } from "@/lib/supabase";
+import { decode } from "base64-arraybuffer";
+import RemoteImage from "@/components/RemoteImage";
+import { Image } from "react-native";
 
 const AddProductScreen = () => {
   const [name, setName] = useState("");
@@ -19,6 +24,7 @@ const AddProductScreen = () => {
   const [image, setImage] = useState<string | null>(
     "https://placehold.co/400x400.png"
   );
+  const [pickedAnImage, setPickedAnImage] = useState(false);
   const { id } = useLocalSearchParams();
   const isEditingProduct = !!id;
   const { mutate: insertProduct, isPending: insertPending } =
@@ -50,6 +56,7 @@ const AddProductScreen = () => {
     });
 
     if (!result.canceled) {
+      setPickedAnImage(true);
       setImage(result.assets[0].uri);
     }
   };
@@ -71,11 +78,6 @@ const AddProductScreen = () => {
     return true;
   };
 
-  const resetFields = () => {
-    setName("");
-    setPrice("");
-  };
-
   const submitProductHandler = () => {
     if (isEditingProduct) {
       editProduct();
@@ -84,44 +86,35 @@ const AddProductScreen = () => {
     }
   };
 
-  const addProduct = () => {
+  const addProduct = async () => {
     if (!validateInputs()) return;
 
-    insertProduct(
-      { name, price: parseFloat(price), img: image },
-      {
-        onSuccess: () => {
-          resetFields();
-          router.back();
-        },
-      }
-    );
+    const imagePath = await uploadImage();
+
+    router.back();
+    insertProduct({ name, price: parseFloat(price), img: imagePath });
   };
 
-  const editProduct = () => {
+  const editProduct = async () => {
     if (!validateInputs()) return;
+    let imagePath: string | undefined = "";
 
-    updateProduct(
-      {
-        id: parseInt(typeof id === "string" ? id : id[0]),
-        data: { name, price: parseFloat(price), img: image },
+    if (pickedAnImage) imagePath = await uploadImage();
+
+    router.back();
+    updateProduct({
+      id: parseInt(typeof id === "string" ? id : id[0]),
+      data: {
+        name,
+        price: parseFloat(price),
+        img: pickedAnImage ? imagePath : image,
       },
-      {
-        onSuccess: () => {
-          resetFields();
-          router.back();
-        },
-      }
-    );
+    });
   };
 
   const onDeleteHandler = () => {
-    deleteProduct(parseInt(typeof id === "string" ? id : id[0]), {
-      onSuccess: () => {
-        resetFields();
-        router.replace("/(admin-tabs)");
-      },
-    });
+    router.replace("/(admin-tabs)");
+    deleteProduct(parseInt(typeof id === "string" ? id : id[0]));
   };
 
   const deleteProductConfirm = () => {
@@ -135,6 +128,25 @@ const AddProductScreen = () => {
     );
   };
 
+  const uploadImage = async () => {
+    if (!image?.startsWith("file://")) {
+      return;
+    }
+
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: "base64",
+    });
+    const filePath = `${randomUUID()}.png`;
+    const contentType = "image/png";
+    const { data, error } = await supabase.storage
+      .from("product-images")
+      .upload(filePath, decode(base64), { contentType });
+
+    if (data) {
+      return data.path;
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -143,13 +155,22 @@ const AddProductScreen = () => {
           headerBackTitleVisible: false,
         }}
       />
-      <Image
-        source={{
-          uri: image === null ? "https://placehold.co/400x400.png" : image,
-        }}
-        style={styles.image}
-        resizeMode="contain"
-      />
+      {isEditingProduct && !pickedAnImage ? (
+        <RemoteImage
+          path={image}
+          fallback="https://placehold.co/400x400.png"
+          style={styles.image}
+          resizeMode="contain"
+        />
+      ) : (
+        <Image
+          source={{
+            uri: image === null ? "https://placehold.co/400x400.png" : image,
+          }}
+          style={styles.image}
+          resizeMode="contain"
+        />
+      )}
       <Text style={styles.textButton} onPress={pickImage}>
         Pick Image
       </Text>
@@ -171,7 +192,15 @@ const AddProductScreen = () => {
       />
       <Text style={styles.errorText}>{errors}</Text>
       <CustomButton
-        text={currentProduct ? "Save" : "Submit"}
+        text={
+          isEditingProduct
+            ? updatePending
+              ? "Saving..."
+              : "Save"
+            : insertPending
+            ? "Submitting..."
+            : "Submit"
+        }
         onPress={submitProductHandler}
         disabled={insertPending || updatePending || deletePending}
       />
@@ -181,7 +210,7 @@ const AddProductScreen = () => {
           onPress={deleteProductConfirm}
           disabled={insertPending || updatePending || deletePending}
         >
-          Delete
+          {deletePending ? "Deleting..." : "Delete"}
         </Text>
       )}
     </View>

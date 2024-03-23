@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,10 +10,10 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { useCart } from "@/providers/CartContextProvider";
 import { useProduct } from "@/api/products";
+import RemoteImage from "@/components/RemoteImage";
 
 const ProductDetailsScreen = () => {
   const [quantity, setQuantity] = useState(1);
-  const [validUri, setValidUri] = useState(true);
   const { addCartItem } = useCart();
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -50,7 +49,7 @@ const ProductDetailsScreen = () => {
     );
   }
 
-  if (error) {
+  if (error || !currentProduct) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "" }} />
@@ -61,19 +60,14 @@ const ProductDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: currentProduct?.name }} />
-      <Image
-        onError={() => setValidUri(false)}
-        source={{
-          uri:
-            validUri && currentProduct?.img !== null
-              ? currentProduct?.img
-              : "https://placehold.co/400x400.png",
-        }}
+      <Stack.Screen options={{ title: currentProduct.name }} />
+      <RemoteImage
+        path={currentProduct.img}
+        fallback="https://placehold.co/400x400.png"
         style={styles.image}
         resizeMode="contain"
       />
-      <Text style={styles.priceText}>₱{currentProduct?.price.toFixed(2)}</Text>
+      <Text style={styles.priceText}>₱{currentProduct.price.toFixed(2)}</Text>
       <View style={styles.quantityContainer}>
         <Text style={styles.quantityText}>Quantity</Text>
         <TouchableOpacity
@@ -96,8 +90,8 @@ const ProductDetailsScreen = () => {
       </View>
       <Text style={styles.totalText}>
         Total: ₱
-        {currentProduct?.price
-          ? (currentProduct?.price * quantity).toFixed(2)
+        {currentProduct.price
+          ? (currentProduct.price * quantity).toFixed(2)
           : 0}
       </Text>
       <CustomButton text="Add to cart" onPress={addToCartHandler} />

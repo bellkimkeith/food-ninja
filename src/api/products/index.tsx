@@ -94,3 +94,19 @@ export const useDeleteProduct = () => {
     },
   });
 };
+
+export const useProductImage = (path: string) => {
+  return useQuery({
+    queryKey: ["products", path],
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from("product-images")
+        .createSignedUrl(path, 3600);
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+  });
+};

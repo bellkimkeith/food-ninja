@@ -12,7 +12,7 @@ const index = () => {
 
   if (!session) return <Redirect href={"/sign-in"} />;
 
-  if (!isAdmin) return <Redirect href={"/(user-tabs)/menu/"} />;
+  if (!isAdmin) return <Redirect href={"/(user-tabs)"} />;
 
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
@@ -25,7 +25,12 @@ const index = () => {
       {/* <Link href={"/sign-in"} asChild>
         <CustomButton text="Sign in" />
       </Link> */}
-      <CustomButton onPress={() => supabase.auth.signOut()} text="Sign out" />
+      <CustomButton
+        onPress={async () => {
+          await supabase.auth.signOut();
+        }}
+        text="Sign out"
+      />
     </View>
   );
 };

@@ -1,24 +1,18 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import Colors from "@/constants/Colors";
 import { OrderItem, Product } from "@/utils/types";
+import RemoteImage from "./RemoteImage";
 
 type OrderItemsListItemProp = {
   orderItem: OrderItem & { products: Product | null };
 };
 
 const OrderItemsListItem = ({ orderItem }: OrderItemsListItemProp) => {
-  const [validUri, setValidUri] = useState(true);
   return (
     <View style={styles.container}>
-      <Image
-        onError={() => setValidUri(false)}
-        source={{
-          uri:
-            validUri && orderItem.products?.img !== null
-              ? orderItem.products?.img
-              : "https://placehold.co/400x400.png",
-        }}
+      <RemoteImage
+        path={orderItem.products?.img}
+        fallback="https://placehold.co/400x400.png"
         style={styles.image}
         resizeMode="contain"
       />

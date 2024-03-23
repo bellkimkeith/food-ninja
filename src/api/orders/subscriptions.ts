@@ -23,7 +23,7 @@ export const useInsertOrderSubscription = () => {
   }, []);
 };
 
-export const useUpdateOrderSubscription = (id: number) => {
+export const useUpdateCurrentSubscription = (id: number) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {

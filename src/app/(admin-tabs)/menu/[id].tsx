@@ -1,20 +1,18 @@
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   StyleSheet,
   Text,
   View,
   useColorScheme,
 } from "react-native";
-import React, { useState } from "react";
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useProduct } from "@/api/products";
+import RemoteImage from "@/components/RemoteImage";
 
 const ProductDetailsScreen = () => {
-  const [validUri, setValidUri] = useState(true);
   const { id } = useLocalSearchParams();
   const {
     data: currentProduct,
@@ -32,7 +30,7 @@ const ProductDetailsScreen = () => {
     );
   }
 
-  if (error) {
+  if (error || !currentProduct) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Stack.Screen options={{ title: "" }} />
@@ -62,14 +60,9 @@ const ProductDetailsScreen = () => {
           ),
         }}
       />
-      <Image
-        onError={() => setValidUri(false)}
-        source={{
-          uri:
-            validUri && currentProduct?.img !== null
-              ? currentProduct?.img
-              : "https://placehold.co/400x400.png",
-        }}
+      <RemoteImage
+        path={currentProduct.img}
+        fallback="https://placehold.co/400x400.png"
         style={styles.image}
         resizeMode="contain"
       />
