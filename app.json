@@ -25,7 +25,7 @@
       },
       "package": "com.bellkimkeith.foodninja",
       "versionCode": 1,
-      "googleServicesFile": "./path/to/google-services.json"
+      "googleServicesFile": "google-services.json"
     },
     "web": {
       "bundler": "metro",

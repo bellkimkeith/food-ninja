@@ -10,23 +10,24 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
     useState<Notifications.Notification>();
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
-  const { profile } = useAuth();
+  const { profile, session } = useAuth();
 
-  const saveExpoPushToken = async (token: string | undefined) => {
+  const saveExpoPushToken = (token: string | undefined) => {
     setExpoPushToken(token);
     if (!token) return;
+    insertExpoPushToken();
+  };
 
+  const insertExpoPushToken = async () => {
     await supabase
       .from("profiles")
-      .update({ expo_push_token: token })
+      .update({ expo_push_token: expoPushToken })
       .eq("id", profile?.id ? profile.id : "");
   };
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      saveExpoPushToken(token)
-    );
-  }, [profile]);
+    insertExpoPushToken();
+  }, [profile, session]);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
