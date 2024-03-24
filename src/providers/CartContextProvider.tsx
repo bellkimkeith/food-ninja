@@ -57,10 +57,6 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
       )
       .filter((item) => item.quantity > 0);
 
-    console.log(cartItems);
-
-    console.log(updatedCartItems);
-
     setCartItems(updatedCartItems);
   };
 

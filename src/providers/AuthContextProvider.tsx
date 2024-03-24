@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { Profile } from "@/utils/types";
 import { Session } from "@supabase/supabase-js";
 import {
   PropsWithChildren,
@@ -11,7 +12,7 @@ import {
 type AuthData = {
   session: Session | null;
   loading: boolean;
-  profile: any;
+  profile: Profile | null;
   isAdmin: boolean;
 };
 

@@ -5,6 +5,7 @@ import Colors from "@/constants/Colors";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useUpdateOrder } from "@/api/orders";
+import { notifyUserOnOrderUpdate } from "@/lib/notifications";
 
 type OrderStatusSelectorProp = {
   order: Order;
@@ -15,7 +16,7 @@ dayjs.extend(relativeTime);
 const OrderStatusSelector = ({ order }: OrderStatusSelectorProp) => {
   const { mutate: updateOrder } = useUpdateOrder();
 
-  const updateStatusHandler = (status: string) => {
+  const updateStatusHandler = async (status: string) => {
     if (
       dayjs().isAfter(order.created_at, "day") &&
       order.status === "Delivered"
@@ -25,6 +26,7 @@ const OrderStatusSelector = ({ order }: OrderStatusSelectorProp) => {
       id: order.id,
       data: { status },
     });
+    await notifyUserOnOrderUpdate({ ...order, status });
   };
 
   return (
