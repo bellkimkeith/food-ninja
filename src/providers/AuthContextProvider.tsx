@@ -27,6 +27,7 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -42,23 +43,31 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
           .select("*")
           .eq("id", session.user.id)
           .single();
-        setProfile(data || null);
+        setProfile(data);
+
+        if (data) {
+          setIsAdmin(data.group === "ADMIN");
+          console.log(data);
+        }
       }
 
       setLoading(false);
     };
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      // setSession(session);
+      if (!session) {
+        setIsAdmin(false);
+        setProfile(null);
+      }
+      fetchSession();
     });
 
     fetchSession();
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{ session, loading, profile, isAdmin: profile?.group === "ADMIN" }}
-    >
+    <AuthContext.Provider value={{ session, loading, profile, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
