@@ -18,11 +18,13 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { session, loading } = useAuth();
+  const { session, loading, profile } = useAuth();
 
   if (loading) return <ActivityIndicator />;
 
   if (!session) return <Redirect href={"/"} />;
+
+  if (profile?.group === "ADMIN") return <Redirect href={"/(admin-tabs)"} />;
 
   return (
     <Tabs

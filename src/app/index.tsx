@@ -1,12 +1,12 @@
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Text } from "react-native";
 import React from "react";
-import CustomButton from "../components/CustomButton";
 import { Link, Redirect } from "expo-router";
 import { useAuth } from "@/providers/AuthContextProvider";
-import { supabase } from "@/lib/supabase";
+import CustomButton from "@/components/CustomButton";
+import { View } from "@/components/Themed";
 
 const index = () => {
-  const { loading, session, isAdmin, profile } = useAuth();
+  const { loading, session, profile } = useAuth();
 
   if (loading) return <ActivityIndicator />;
 
@@ -14,23 +14,21 @@ const index = () => {
 
   if (profile?.group === "USER") return <Redirect href={"/(user-tabs)"} />;
 
-  return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
-      <Link href={"/(user-tabs)"} asChild>
-        <CustomButton text="User" />
-      </Link>
+  return !profile ? (
+    <ActivityIndicator />
+  ) : (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        padding: 10,
+        alignItems: "center",
+      }}
+    >
+      <Text>Welcome Admin</Text>
       <Link href={"/(admin-tabs)"} asChild>
-        <CustomButton text="Admin" />
+        <CustomButton text="Continue" />
       </Link>
-      {/* <Link href={"/sign-in"} asChild>
-        <CustomButton text="Sign in" />
-      </Link> */}
-      <CustomButton
-        onPress={async () => {
-          await supabase.auth.signOut();
-        }}
-        text="Sign out"
-      />
     </View>
   );
 };
