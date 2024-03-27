@@ -29,9 +29,8 @@ const ProfileScreen = () => {
   );
   const [pickedAnImage, setPickedAnImage] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [id, setId] = useState("");
   const { profile } = useAuth();
-  const { mutate: editUserProfile } = useUpdateProfile();
+  const { mutate: editUserProfile, isPending } = useUpdateProfile();
   const colorScheme = useColorScheme();
 
   useEffect(() => {
@@ -40,7 +39,6 @@ const ProfileScreen = () => {
         setName("");
       } else {
         setName(profile.full_name);
-        setId(profile.id);
       }
       setImage(profile.avatar_url);
     }
@@ -104,7 +102,6 @@ const ProfileScreen = () => {
           } else {
             setName(data.full_name);
           }
-          setImage(data.avatar_url);
           setIsEditingProfile(!isEditingProfile);
         },
       }
@@ -143,6 +140,7 @@ const ProfileScreen = () => {
                 if (!isEditingProfile && !errors)
                   setIsEditingProfile(!isEditingProfile);
               }}
+              disabled={isPending}
             >
               {({ pressed }) => (
                 <FontAwesome
@@ -197,6 +195,7 @@ const ProfileScreen = () => {
           await supabase.auth.signOut();
         }}
         text="Sign out"
+        disabled={isPending}
       />
     </View>
   );
