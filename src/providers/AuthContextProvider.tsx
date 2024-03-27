@@ -13,6 +13,7 @@ type AuthData = {
   session: Session | null;
   loading: boolean;
   profile: Profile | null;
+  updateProfile: (data: Profile) => void;
   isAdmin: boolean;
 };
 
@@ -20,12 +21,13 @@ const AuthContext = createContext<AuthData>({
   session: null,
   loading: true,
   profile: null,
+  updateProfile: () => {},
   isAdmin: false,
 });
 
 export default function AuthContextProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -47,7 +49,6 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
 
         if (data) {
           setIsAdmin(data.group === "ADMIN");
-          console.log(data);
         }
       }
 
@@ -55,7 +56,6 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
     };
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      // setSession(session);
       if (!session) {
         setIsAdmin(false);
         setProfile(null);
@@ -66,8 +66,14 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
     fetchSession();
   }, []);
 
+  const updateProfile = (data: Profile) => {
+    setProfile(data);
+  };
+
   return (
-    <AuthContext.Provider value={{ session, loading, profile, isAdmin }}>
+    <AuthContext.Provider
+      value={{ session, loading, profile, updateProfile, isAdmin }}
+    >
       {children}
     </AuthContext.Provider>
   );

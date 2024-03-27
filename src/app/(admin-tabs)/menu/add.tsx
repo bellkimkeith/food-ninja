@@ -159,6 +159,7 @@ const AddProductScreen = () => {
         <RemoteImage
           path={image}
           fallback="https://placehold.co/400x400.png"
+          imageType="product"
           style={styles.image}
           resizeMode="contain"
         />

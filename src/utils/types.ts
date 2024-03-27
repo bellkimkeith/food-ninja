@@ -28,6 +28,7 @@ export type OrderItem = Tables<"order_items">;
 export type InsertOrderItems = InsertTables<"order_items">;
 
 export type Profile = Tables<"profiles">;
+export type UpdateProfile = UpdateTables<"profiles">;
 
 export type CartItem = {
   id: string;

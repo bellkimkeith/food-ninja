@@ -13,6 +13,7 @@ const OrderItemsListItem = ({ orderItem }: OrderItemsListItemProp) => {
       <RemoteImage
         path={orderItem.products?.img}
         fallback="https://placehold.co/400x400.png"
+        imageType="product"
         style={styles.image}
         resizeMode="contain"
       />

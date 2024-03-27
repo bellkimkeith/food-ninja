@@ -17,6 +17,7 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
       <RemoteImage
         path={cartItem.product.img}
         fallback="https://placehold.co/400x400.png"
+        imageType="product"
         style={styles.image}
         resizeMode="contain"
       />

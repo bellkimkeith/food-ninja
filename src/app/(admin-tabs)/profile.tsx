@@ -1,6 +1,4 @@
 import {
-  Alert,
-  Button,
   Pressable,
   StyleSheet,
   Text,
@@ -9,7 +7,7 @@ import {
   useColorScheme,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
@@ -20,6 +18,8 @@ import { decode } from "base64-arraybuffer";
 import RemoteImage from "@/components/RemoteImage";
 import { Image } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useAuth } from "@/providers/AuthContextProvider";
+import { useUpdateProfile } from "@/api/profiles";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
@@ -29,17 +29,22 @@ const ProfileScreen = () => {
   );
   const [pickedAnImage, setPickedAnImage] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const router = useRouter();
+  const [id, setId] = useState("");
+  const { profile } = useAuth();
+  const { mutate: editUserProfile } = useUpdateProfile();
   const colorScheme = useColorScheme();
 
-  // change to current profile
-
-  //   useEffect(() => {
-  //     if (currentProduct) {
-  //       setName(currentProduct.name);
-  //       setImage(currentProduct.img);
-  //     }
-  //   }, [currentProduct]);
+  useEffect(() => {
+    if (profile) {
+      if (!profile.full_name) {
+        setName("");
+      } else {
+        setName(profile.full_name);
+        setId(profile.id);
+      }
+      setImage(profile.avatar_url);
+    }
+  }, [profile]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -86,17 +91,24 @@ const ProfileScreen = () => {
 
     if (pickedAnImage) imagePath = await uploadImage();
 
-    router.back();
-    // change to update profile instead
-
-    // updateProduct({
-    //   id: parseInt(typeof id === "string" ? id : id[0]),
-    //   data: {
-    //     name,
-    //     price: parseFloat(price),
-    //     img: pickedAnImage ? imagePath : image,
-    //   },
-    // });
+    editUserProfile(
+      {
+        full_name: name,
+        avatar_url: pickedAnImage ? imagePath : image,
+      },
+      {
+        onSuccess: (data) => {
+          if (!data) return;
+          if (!data.full_name) {
+            setName("");
+          } else {
+            setName(data.full_name);
+          }
+          setImage(data.avatar_url);
+          setIsEditingProfile(!isEditingProfile);
+        },
+      }
+    );
   };
 
   const uploadImage = async () => {
@@ -110,8 +122,7 @@ const ProfileScreen = () => {
     const filePath = `${randomUUID()}.png`;
     const contentType = "image/png";
     const { data, error } = await supabase.storage
-      // change to avatar-images
-      .from("product-images")
+      .from("avatars")
       .upload(filePath, decode(base64), { contentType });
 
     if (data) {
@@ -125,7 +136,14 @@ const ProfileScreen = () => {
         options={{
           headerBackTitleVisible: false,
           headerRight: () => (
-            <Pressable onPress={submitProfileHandler}>
+            <Pressable
+              onPress={() => {
+                setErrors("");
+                if (isEditingProfile && !errors) submitProfileHandler();
+                if (!isEditingProfile && !errors)
+                  setIsEditingProfile(!isEditingProfile);
+              }}
+            >
               {({ pressed }) => (
                 <FontAwesome
                   name={isEditingProfile ? "save" : "pencil"}
@@ -138,10 +156,11 @@ const ProfileScreen = () => {
           ),
         }}
       />
-      {isEditingProfile && !pickedAnImage ? (
+      {profile && !pickedAnImage ? (
         <RemoteImage
           path={image}
           fallback="https://placehold.co/400x400.png"
+          imageType="profile"
           style={styles.image}
           resizeMode="contain"
         />
@@ -154,11 +173,18 @@ const ProfileScreen = () => {
           resizeMode="contain"
         />
       )}
-      <Text style={styles.textButton} onPress={pickImage}>
+      <Text
+        style={[styles.textButton, !isEditingProfile && { color: "#ccc" }]}
+        onPress={pickImage}
+        disabled={!isEditingProfile}
+      >
         Change Image
       </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          isEditingProfile && { borderWidth: 4, borderColor: "lightblue" },
+        ]}
         placeholder="Add Name"
         value={name}
         onChangeText={setName}
