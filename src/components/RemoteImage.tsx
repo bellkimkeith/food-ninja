@@ -1,7 +1,6 @@
 import { ActivityIndicator, Image } from "react-native";
-import React, { ComponentProps } from "react";
-import { useProductImage } from "@/api/products";
-import { useProfileImage } from "@/api/profiles";
+import React, { ComponentProps, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 type RemoteImageProps = {
   path?: string | null;
@@ -15,43 +14,39 @@ const RemoteImage = ({
   imageType,
   ...imageProps
 }: RemoteImageProps) => {
-  let data: any = null;
-  let error: Error | null = null;
-  let loading: boolean = true;
+  const [image, setImage] = useState("");
+  const [data, setData] = useState<string | undefined>();
+  const [error, setError] = useState<string | undefined>();
 
-  switch (imageType) {
-    case "product":
-      const {
-        data: productData,
-        error: productError,
-        isLoading: productLoading,
-      } = useProductImage(path ? path : fallback);
-      data = productData;
-      error = productError;
-      loading = productLoading;
-      break;
+  useEffect(() => {
+    if (!path) return;
+    (async () => {
+      setImage("");
+      if (imageType === "product") {
+        const { data, error } = await supabase.storage
+          .from("product-images")
+          .createSignedUrl(path, 3600);
+        setData(data?.signedUrl);
+        setError(error?.message);
+      } else {
+        const { data, error } = await supabase.storage
+          .from("avatars")
+          .createSignedUrl(path, 3600);
+        setData(data?.signedUrl);
+        setError(error?.message);
+      }
 
-    case "profile":
-      const {
-        data: profileData,
-        error: profileError,
-        isLoading: profileLoading,
-      } = useProfileImage(path ? path : fallback);
-      data = profileData;
-      error = profileError;
-      loading = profileLoading;
-      break;
+      if (error) {
+        throw new Error(error);
+      }
 
-    default:
-      break;
-  }
+      if (data) {
+        setImage(data);
+      }
+    })();
+  }, [path, data]);
 
-  if (loading) return <ActivityIndicator />;
-
-  if (error || !data)
-    return <Image source={{ uri: fallback }} {...imageProps} />;
-
-  return <Image source={{ uri: data.signedUrl }} {...imageProps} />;
+  return <Image source={{ uri: image || fallback }} {...imageProps} />;
 };
 
 export default RemoteImage;
