@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image } from "react-native";
+import { Image } from "react-native";
 import React, { ComponentProps, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -23,23 +23,29 @@ const RemoteImage = ({
     (async () => {
       setImage("");
       if (imageType === "product") {
-        const { data, error } = await supabase.storage
+        await supabase.storage
           .from("product-images")
-          .createSignedUrl(path, 3600);
-        setData(data?.signedUrl);
-        setError(error?.message);
+          .createSignedUrl(path, 3600)
+          .then((result) => {
+            setData(result.data?.signedUrl);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       } else {
-        const { data, error } = await supabase.storage
+        await supabase.storage
           .from("avatars")
-          .createSignedUrl(path, 3600);
-        setData(data?.signedUrl);
-        setError(error?.message);
+          .createSignedUrl(path, 3600)
+          .then((result) => {
+            setData(result.data?.signedUrl);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
-
       if (error) {
         throw new Error(error);
       }
-
       if (data) {
         setImage(data);
       }
