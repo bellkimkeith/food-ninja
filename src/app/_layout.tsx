@@ -14,6 +14,7 @@ import CartContextProvider from "@/providers/CartContextProvider";
 import AuthContextProvider from "@/providers/AuthContextProvider";
 import QueryProvider from "@/providers/QueryProvider";
 import NotificationProvider from "@/providers/NotificationProvider";
+import LocationContextProvider from "@/providers/LocationContextProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -60,21 +61,35 @@ function RootLayoutNav() {
       <AuthContextProvider>
         <QueryProvider>
           <NotificationProvider>
-            <CartContextProvider>
-              <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="(admin-tabs)"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="(user-tabs)"
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="cart" options={{ presentation: "modal" }} />
-              </Stack>
-            </CartContextProvider>
+            <LocationContextProvider>
+              <CartContextProvider>
+                <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="(admin-tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="(user-tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="cart"
+                    options={{ presentation: "modal" }}
+                  />
+                  <Stack.Screen
+                    name="map"
+                    options={{
+                      presentation: "fullScreenModal",
+                    }}
+                  />
+                </Stack>
+              </CartContextProvider>
+            </LocationContextProvider>
           </NotificationProvider>
         </QueryProvider>
       </AuthContextProvider>

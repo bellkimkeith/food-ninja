@@ -24,6 +24,11 @@ export default {
       package: "com.bellkimkeith.foodninja",
       versionCode: 1,
       googleServicesFile: process.env.FOOD_NINJA_GOOGLE_SERVICES,
+      config: {
+        googleMaps: {
+          apiKey: process.env.EXPO_PUBLIC_ANDROID_MAP_API_KEY,
+        },
+      },
     },
     web: {
       bundler: "metro",
