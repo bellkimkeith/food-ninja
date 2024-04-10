@@ -52,7 +52,7 @@ const ProductDetailsScreen = () => {
   if (error || !currentProduct) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Stack.Screen options={{ title: "" }} />
+        <Stack.Screen options={{ title: "", headerBackTitleVisible: false }} />
         <Text>No product details</Text>
       </View>
     );
@@ -60,7 +60,9 @@ const ProductDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: currentProduct.name }} />
+      <Stack.Screen
+        options={{ title: currentProduct.name, headerBackTitleVisible: false }}
+      />
       <RemoteImage
         path={currentProduct.img}
         fallback="https://placehold.co/400x400.png"

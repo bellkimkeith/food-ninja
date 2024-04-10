@@ -16,10 +16,12 @@ import { StatusBar } from "expo-status-bar";
 import { useLocation } from "@/providers/LocationContextProvider";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import GooglePlacesInput from "@/components/MapSearch";
+import { useConvertToAddress } from "@/api/location";
 
 export default function Map() {
   const { latitude, longitude } = useLocalSearchParams();
-  const { location, updateLocation } = useLocation();
+  const { location, updateLocation, updateAddress } = useLocation();
   const colorScheme = useColorScheme();
 
   const [region, setRegion] = useState({
@@ -53,10 +55,16 @@ export default function Map() {
     }
   }, [location, setRegion]);
 
+  const setAddress = async (latitude: number, longitude: number) => {
+    const formattedAddress = await useConvertToAddress(latitude, longitude);
+    updateAddress(formattedAddress);
+  };
+
   const pickLocationHandler = (event: MapPressEvent) => {
     const latitude = event.nativeEvent.coordinate.latitude;
     const longitude = event.nativeEvent.coordinate.longitude;
     updateLocation(latitude, longitude);
+    setAddress(latitude, longitude);
   };
 
   return (
@@ -92,11 +100,15 @@ export default function Map() {
         onPress={pickLocationHandler}
         provider={PROVIDER_GOOGLE}
         zoomEnabled={true}
+        mapType="terrain"
       >
         {location && (
           <Marker title="Picked Location" coordinate={{ ...location }} />
         )}
       </MapView>
+      <View style={styles.search}>
+        <GooglePlacesInput />
+      </View>
     </View>
   );
 }
@@ -106,7 +118,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    width: "100%",
-    height: "100%",
+    flex: 4,
+  },
+  search: {
+    flex: 1,
+    paddingBottom: 20,
+    backgroundColor: "#fff",
   },
 });

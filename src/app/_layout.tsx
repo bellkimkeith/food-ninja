@@ -85,6 +85,7 @@ function RootLayoutNav() {
                     name="map"
                     options={{
                       presentation: "fullScreenModal",
+                      headerBackVisible: false,
                     }}
                   />
                 </Stack>
