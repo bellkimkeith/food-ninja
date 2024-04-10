@@ -79,7 +79,8 @@ const Cart = () => {
         {profile && !profile.phone && (
           <FontAwesome
             onPress={() => {
-              console.log("add phone");
+              router.dismiss();
+              router.push("/(user-tabs)/profile");
             }}
             name="pencil"
             color="gray"

@@ -17,7 +17,7 @@ import { useLocation } from "@/providers/LocationContextProvider";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import GooglePlacesInput from "@/components/MapSearch";
-import { useConvertToAddress, useCurrentLocation } from "@/api/location";
+import { useConvertToAddress } from "@/api/location";
 
 export default function Map() {
   const { latitude, longitude } = useLocalSearchParams();
