@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import * as Location from "expo-location";
 
 export const useCurrentLocation = () => {
-  const { updateAddress } = useLocation();
+  const { updateAddress, updateLocation } = useLocation();
   return useQuery({
     queryKey: ["currentLocation"],
     queryFn: async () => {
@@ -13,15 +13,13 @@ export const useCurrentLocation = () => {
       }
       const { coords } = await Location.getCurrentPositionAsync({});
 
-      // const formattedAddress = await useConvertToAddress(latitude, longitude);
-      // updateAddress(formattedAddress);
-
       if (coords) {
         const formattedAddress = await useConvertToAddress(
           coords.latitude,
           coords.longitude
         );
         updateAddress(formattedAddress);
+        updateLocation(coords.latitude, coords.longitude);
       }
 
       return coords;

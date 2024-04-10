@@ -64,7 +64,7 @@ export default function MenuLayout() {
           headerLeft: () => (
             <Link
               href={
-                data
+                data && !location
                   ? {
                       pathname: "/map",
                       params: {
