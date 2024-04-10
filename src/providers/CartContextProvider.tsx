@@ -5,6 +5,7 @@ import { useInsertOrder } from "@/api/orders";
 import { useAuth } from "./AuthContextProvider";
 import { useRouter } from "expo-router";
 import { useInsertOrderItems } from "@/api/order-items";
+import { useLocation } from "./LocationContextProvider";
 
 type CartType = {
   cartItems: CartItem[];
@@ -26,7 +27,8 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const { mutate: insertOrder } = useInsertOrder();
   const { mutate: insertOrderItem } = useInsertOrderItems();
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
+  const { address } = useLocation();
   const id = session?.user.id ? session?.user.id : "";
   const router = useRouter();
 
@@ -71,7 +73,7 @@ const CartContextProvider = ({ children }: PropsWithChildren) => {
 
   const checkout = () => {
     insertOrder(
-      { total: totalAmount, user_id: id },
+      { total: totalAmount, user_id: id, address, phone: profile?.phone },
       {
         onSuccess: (data) => {
           if (!data) return [];
