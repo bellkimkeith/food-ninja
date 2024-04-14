@@ -23,6 +23,7 @@ import { useUpdateProfile } from "@/api/profiles";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState("");
   const [image, setImage] = useState<string | null>(
     "https://placehold.co/400x400.png"
@@ -41,6 +42,7 @@ const ProfileScreen = () => {
         setName(profile.full_name);
       }
       setImage(profile.avatar_url);
+      setPhone(profile.phone);
     }
   }, [profile]);
 
@@ -71,8 +73,18 @@ const ProfileScreen = () => {
       return false;
     }
 
-    if (name.match(/^[A-Za-z] [A-Za-z]+$/)) {
-      setErrors("Name can't contain number!");
+    if (!phone) {
+      setErrors("Phone number is required!");
+      return false;
+    }
+
+    if (phone.length < 11 && phone.length !== 0) {
+      setErrors("Phone number must be 11 digits!");
+      return false;
+    }
+
+    if (phone.length > 11) {
+      setErrors("Exceeded 11 maximum digits!");
       return false;
     }
 
@@ -93,6 +105,7 @@ const ProfileScreen = () => {
       {
         full_name: name,
         avatar_url: pickedAnImage ? imagePath : image,
+        phone,
       },
       {
         onSuccess: (data) => {
@@ -188,6 +201,19 @@ const ProfileScreen = () => {
         onChangeText={setName}
         autoCorrect={false}
         editable={isEditingProfile}
+      />
+      <TextInput
+        style={[
+          styles.input,
+          isEditingProfile && { borderWidth: 4, borderColor: "lightblue" },
+        ]}
+        placeholder="Add Phone Number"
+        value={phone}
+        onChangeText={setPhone}
+        autoCorrect={false}
+        editable={isEditingProfile}
+        keyboardType="number-pad"
+        maxLength={11}
       />
       <Text style={styles.errorText}>{errors}</Text>
       <CustomButton

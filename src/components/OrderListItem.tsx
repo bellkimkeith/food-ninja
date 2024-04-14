@@ -22,6 +22,8 @@ const OrderListItem = ({ order }: OrderListItemProp) => {
       <Pressable style={styles.container}>
         <View style={styles.innerContainer}>
           <Text>Order #{order.id}</Text>
+          <Text>{order.address}</Text>
+          <Text>{order.phone}</Text>
           <Text>{dayjs(order.created_at).fromNow()}</Text>
         </View>
         <Text style={styles.statusText}>{order.status}</Text>
@@ -38,6 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 10,
     borderRadius: 12,
+    gap: 10,
   },
   innerContainer: {
     flex: 1,
