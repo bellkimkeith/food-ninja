@@ -5,9 +5,12 @@ import MapView, {
   PROVIDER_GOOGLE,
 } from "react-native-maps";
 import {
+  Keyboard,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   StyleSheet,
+  TouchableWithoutFeedback,
   View,
   useColorScheme,
 } from "react-native";
@@ -68,48 +71,55 @@ export default function Map() {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-      <Stack.Screen
-        options={{
-          title: "Map",
-          headerRight: () => (
-            <Pressable onPress={() => router.back()}>
-              {({ pressed }) => (
-                <FontAwesome
-                  name="save"
-                  size={24}
-                  color={Colors[colorScheme ?? "light"].text}
-                  style={{
-                    marginRight: 15,
-                    opacity: pressed ? 0.5 : 1,
-                  }}
-                />
-              )}
-            </Pressable>
-          ),
-        }}
-      />
-      <View style={styles.search}>
-        <GooglePlacesInput />
-      </View>
-      <MapView
-        style={styles.map}
-        region={region}
-        zoomControlEnabled
-        showsMyLocationButton
-        showsUserLocation
-        minZoomLevel={18}
-        onPress={pickLocationHandler}
-        provider={PROVIDER_GOOGLE}
-        zoomEnabled={true}
-        mapType="terrain"
-      >
-        {location && (
-          <Marker title="Picked Location" coordinate={{ ...location }} />
-        )}
-      </MapView>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+          <Stack.Screen
+            options={{
+              title: "Map",
+              headerRight: () => (
+                <Pressable onPress={() => router.back()}>
+                  {({ pressed }) => (
+                    <FontAwesome
+                      name="save"
+                      size={24}
+                      color={Colors[colorScheme ?? "light"].text}
+                      style={{
+                        marginRight: 15,
+                        opacity: pressed ? 0.5 : 1,
+                      }}
+                    />
+                  )}
+                </Pressable>
+              ),
+            }}
+          />
+          <View style={styles.search}>
+            <GooglePlacesInput />
+          </View>
+          <MapView
+            style={styles.map}
+            region={region}
+            zoomControlEnabled
+            showsMyLocationButton
+            showsUserLocation
+            minZoomLevel={18}
+            onPress={pickLocationHandler}
+            provider={PROVIDER_GOOGLE}
+            zoomEnabled={true}
+            mapType="terrain"
+          >
+            {location && (
+              <Marker title="Picked Location" coordinate={{ ...location }} />
+            )}
+          </MapView>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -118,11 +128,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    flex: 6,
+    flex: 3,
   },
   search: {
     flex: 1,
-    paddingBottom: 20,
-    backgroundColor: "#fff",
   },
 });
