@@ -49,7 +49,7 @@ const GooglePlacesInput = () => {
         },
         container: {
           borderRadius: 8,
-          flex: 1,
+          flex: 0,
         },
         separator: {
           height: 0.3,

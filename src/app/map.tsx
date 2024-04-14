@@ -98,9 +98,10 @@ export default function Map() {
               ),
             }}
           />
-          <View style={styles.search}>
+          <View>
             <GooglePlacesInput />
           </View>
+
           <MapView
             style={styles.map}
             region={region}
@@ -128,9 +129,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    flex: 3,
-  },
-  search: {
     flex: 1,
   },
 });
