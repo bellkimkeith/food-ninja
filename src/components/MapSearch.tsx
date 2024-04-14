@@ -38,12 +38,6 @@ const GooglePlacesInput = () => {
           borderWidth: 0.2,
           marginHorizontal: 5,
         },
-        listView: {
-          marginRight: 8,
-        },
-        container: {
-          borderRadius: 8,
-        },
       }}
       textInputProps={{
         value: address,
@@ -52,6 +46,7 @@ const GooglePlacesInput = () => {
           handleChange(e);
         },
         autoCorrect: false,
+        clearButtonMode: "always",
       }}
     />
   );

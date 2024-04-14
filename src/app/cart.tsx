@@ -101,8 +101,10 @@ const Cart = () => {
               [{ text: "Close", style: "cancel" }],
               { cancelable: true }
             );
+            checkout();
+          } else {
+            checkout();
           }
-          checkout();
         }}
       />
 

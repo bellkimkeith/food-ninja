@@ -90,6 +90,9 @@ export default function Map() {
           ),
         }}
       />
+      <View style={styles.search}>
+        <GooglePlacesInput />
+      </View>
       <MapView
         style={styles.map}
         region={region}
@@ -106,9 +109,6 @@ export default function Map() {
           <Marker title="Picked Location" coordinate={{ ...location }} />
         )}
       </MapView>
-      <View style={styles.search}>
-        <GooglePlacesInput />
-      </View>
     </View>
   );
 }
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    flex: 4,
+    flex: 6,
   },
   search: {
     flex: 1,
