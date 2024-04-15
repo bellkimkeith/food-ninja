@@ -154,52 +154,58 @@ const ProfileScreen = () => {
           ),
         }}
       />
-      {profile && !pickedAnImage ? (
-        <RemoteImage
-          path={image}
-          fallback="https://placehold.co/400x400.png"
-          imageType="profile"
-          style={styles.image}
-          resizeMode="contain"
-        />
-      ) : (
-        <Image
-          source={{
-            uri: image === null ? "https://placehold.co/400x400.png" : image,
-          }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      )}
-      {isEditingProfile && (
-        <Text
-          style={[styles.textButton, !isEditingProfile && { color: "#ccc" }]}
-          onPress={pickImage}
-          disabled={!isEditingProfile}
-        >
-          Change Image
-        </Text>
-      )}
+      <View style={styles.formContainer}>
+        {profile && !pickedAnImage ? (
+          <RemoteImage
+            path={image}
+            fallback="https://placehold.co/400x400.png"
+            imageType="profile"
+            style={styles.image}
+            resizeMode="contain"
+          />
+        ) : (
+          <Image
+            source={{
+              uri: image === null ? "https://placehold.co/400x400.png" : image,
+            }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        )}
+        {isEditingProfile && (
+          <Text
+            style={[styles.textButton, !isEditingProfile && { color: "#ccc" }]}
+            onPress={pickImage}
+            disabled={!isEditingProfile}
+          >
+            Change Image
+          </Text>
+        )}
 
-      <TextInput
-        style={[
-          styles.input,
-          isEditingProfile && { borderWidth: 4, borderColor: "lightblue" },
-        ]}
-        placeholder="Add Name"
-        value={name}
-        onChangeText={setName}
-        autoCorrect={false}
-        editable={isEditingProfile}
-      />
-      <Text style={styles.errorText}>{errors}</Text>
-      <CustomButton
-        onPress={async () => {
-          await supabase.auth.signOut();
-        }}
-        text="Sign out"
-        disabled={isPending}
-      />
+        <TextInput
+          style={[
+            styles.input,
+            isEditingProfile && { borderWidth: 4, borderColor: "lightblue" },
+          ]}
+          placeholder="Add Name"
+          value={name}
+          onChangeText={setName}
+          autoCorrect={false}
+          editable={isEditingProfile}
+        />
+        <Text style={styles.errorText}>{errors}</Text>
+      </View>
+      {!isEditingProfile && (
+        <View>
+          <CustomButton
+            onPress={async () => {
+              await supabase.auth.signOut();
+            }}
+            text="Sign out"
+            disabled={isPending}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -239,5 +245,8 @@ const styles = StyleSheet.create({
     color: Colors.light.tint,
     textAlign: "center",
     marginVertical: 10,
+  },
+  formContainer: {
+    flex: 1,
   },
 });

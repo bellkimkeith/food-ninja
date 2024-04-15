@@ -37,15 +37,7 @@ const Cart = () => {
         data={cartItems}
         renderItem={({ item }) => <CartListItem cartItem={item} />}
       />
-
-      <View
-        style={{
-          flexDirection: "row",
-          backgroundColor: "#fff",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+      <View style={styles.bottomFields}>
         <Text style={styles.bottomText}>
           Address:{" "}
           {address
@@ -60,19 +52,12 @@ const Cart = () => {
           }}
           name="pencil"
           color="gray"
-          size={24}
+          size={16}
           style={{ paddingRight: 15 }}
         />
       </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          backgroundColor: "#fff",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+      <View style={styles.bottomFields}>
         <Text style={styles.bottomText}>
           Phone: {profile && profile.phone ? profile.phone : "Add phone number"}
         </Text>
@@ -84,7 +69,7 @@ const Cart = () => {
             }}
             name="pencil"
             color="gray"
-            size={24}
+            size={16}
             style={{ paddingRight: 15 }}
           />
         )}
@@ -118,7 +103,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    gap: 5,
+    margin: 5,
+    gap: 1,
   },
   fallbackText: {
     textAlign: "center",
@@ -126,8 +112,15 @@ const styles = StyleSheet.create({
     marginTop: "50%",
   },
   bottomText: {
-    fontSize: 24,
+    fontSize: 16,
     backgroundColor: "#fff",
     padding: 5,
+  },
+  bottomFields: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingRight: 5,
   },
 });
