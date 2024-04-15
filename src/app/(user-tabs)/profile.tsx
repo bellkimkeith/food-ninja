@@ -184,13 +184,16 @@ const ProfileScreen = () => {
           resizeMode="contain"
         />
       )}
-      <Text
-        style={[styles.textButton, !isEditingProfile && { color: "#ccc" }]}
-        onPress={pickImage}
-        disabled={!isEditingProfile}
-      >
-        Change Image
-      </Text>
+      {isEditingProfile && (
+        <Text
+          style={[styles.textButton, !isEditingProfile && { color: "#ccc" }]}
+          onPress={pickImage}
+          disabled={!isEditingProfile}
+        >
+          Change Image
+        </Text>
+      )}
+
       <TextInput
         style={[
           styles.input,
@@ -255,6 +258,7 @@ const styles = StyleSheet.create({
     width: "50%",
     aspectRatio: 1,
     borderRadius: 12,
+    marginBottom: 10,
   },
   textButton: {
     fontSize: 18,
