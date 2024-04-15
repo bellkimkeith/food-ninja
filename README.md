@@ -49,6 +49,7 @@ To run this project, you will need to add the following environment variables to
 - Authentication
 - Push Notifications
 - Products and orders management
+- Google maps for location
 
 ## Screenshots
 
@@ -65,6 +66,9 @@ To run this project, you will need to add the following environment variables to
 <img src="screenshots/AddProduct.png" height="200" >
 <img src="screenshots/EditProduct.png" height="200" >
 <img src="screenshots/AddToCart.png" height="200" >
+<img src="screenshots/CurrentLocation.png" height="200" >
+<img src="screenshots/SearchLocation.png" height="200" >
+<img src="screenshots/SelectedLocation.png" height="200" >
 </div>
 
 ## Documentation for dependencies
