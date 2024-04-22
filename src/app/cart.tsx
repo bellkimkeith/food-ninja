@@ -53,7 +53,6 @@ const Cart = () => {
           name="pencil"
           color="gray"
           size={16}
-          style={{ paddingRight: 15 }}
         />
       </View>
 
@@ -70,12 +69,13 @@ const Cart = () => {
             name="pencil"
             color="gray"
             size={16}
-            style={{ paddingRight: 15 }}
           />
         )}
       </View>
+      <View style={styles.bottomFields}>
+        <Text style={styles.bottomText}>Total: ₱{totalAmount.toFixed(2)}</Text>
+      </View>
 
-      <Text style={styles.bottomText}>Total: ₱{totalAmount.toFixed(2)}</Text>
       <CustomButton
         text="Checkout"
         onPress={() => {
@@ -117,10 +117,12 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   bottomFields: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
     flexDirection: "row",
     backgroundColor: "#fff",
     alignItems: "center",
+    gap: 1,
     justifyContent: "space-between",
-    paddingRight: 5,
   },
 });
